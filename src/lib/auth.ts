@@ -1,5 +1,5 @@
 import { betterAuth, type BetterAuthOptions } from "better-auth";
-import { D1Dialect } from "./data/kysely-d1";
+import { D1Dialect } from "./server/data/kysely-d1";
 
 
 /**

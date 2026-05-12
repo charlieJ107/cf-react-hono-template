@@ -43,9 +43,12 @@ A full-stack template built with **React**, **Hono**, and **Vite**, designed to 
 │   │   └── notfound.tsx
 │   ├── components/ui/    # shadcn components (button, card, etc.)
 │   └── lib/
-│       ├── auth.ts       # Better Auth server config (D1)
-│       ├── auth-client.ts# Frontend auth client
-│       └── data/         # Kysely D1 adapter, etc.
+│       ├── auth.ts           # Better Auth server config (D1) — stays at root for CLI compatibility
+│       ├── utils.ts          # shadcn cn() utility — stays at root for shadcn CLI compatibility
+│       ├── client/           # React-only: auth-client, fetch helpers
+│       ├── server/           # Worker-only: D1/Kysely adapter, server utilities
+│       │   └── data/         # Kysely D1 adapter
+│       └── shared/           # Used by both Worker and React: error codes, shared types
 ├── migrations/           # Optional: custom D1 migrations
 ├── better-auth.config.ts # CLI-only: generate Better Auth schema (local SQLite)
 ├── wrangler.jsonc        # Worker, D1, and static assets config
@@ -137,7 +140,7 @@ Open **http://localhost:8787** (or the URL shown in the terminal). You can use:
 
 ## Architecture
 
-- **Single Worker, two roles**: In `wrangler.jsonc`, `main` points to the Hono entry (`./src/api/index.ts`), and `assets` points to `./dist/client` with `not_found_handling: "single-page-application"`. Unmatched paths (e.g. SPA routes) fall back to `index.html`; `/api/*` is handled by the Worker.
+- **Single Worker, two roles**: In `wrangler.jsonc`, `main` points to the Hono entry (`./src/api/index.ts`), and `assets` points to `./dist/client` with `binding: "ASSETS"` and `not_found_handling: "none"`. All requests pass through the Worker; a catch-all route in `src/api/index.ts` serves `index.html` for SPA navigation and returns JSON 404 for unknown `/api/*` paths.
 - **Same-origin**: Frontend and API share the same origin, so requests with `credentials: "include"` send cookies; no CORS setup is required.
 - **Auth and D1**: At runtime, auth uses D1 via `getAuth(c.env)`. The CLI uses `better-auth.config.ts` with a local SQLite DB only to generate the same schema; you then apply it to D1 with `wrangler d1 execute`.
 

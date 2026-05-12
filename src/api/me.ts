@@ -16,7 +16,7 @@ meApp.use("*", async (c, next) => {
     const auth = getAuth(c.env);
     const session = await auth.api.getSession({ headers: c.req.raw.headers });
     if (!session) {
-        return c.json({ error: "Unauthorized" }, 401);
+        return c.json({ code: "UNAUTHORIZED", message: "Unauthorized" }, 401);
     }
     c.set("user", session.user);
     c.set("session", session.session);

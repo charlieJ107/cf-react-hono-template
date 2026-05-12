@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "auth:generate": "auth generate --config better-auth.config.ts --output ./schema.sql --yes",
     "cf-typegen": "wrangler types",
-    "deploy": "wrangler deploy",
+    "deploy": "tsc -b && vite build && wrangler deploy",
     "check": "tsc && vite build && wrangler deploy --dry-run"
   },
   "dependencies": {

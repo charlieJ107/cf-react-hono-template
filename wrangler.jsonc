@@ -7,18 +7,25 @@
 		"nodejs_compat"
 	],
 	"observability": {
-		"enabled": true
+		"logs": {
+			"enabled": true,
+			"invocation_logs": true
+		},
+		"traces": {
+			"enabled": false
+		}
 	},
 	"upload_source_maps": true,
 	"assets": {
 		"directory": "./dist/client",
-		"not_found_handling": "single-page-application"
+		"not_found_handling": "none",
+		"binding": "ASSETS"
 	},
 	"d1_databases": [
 		{
 			"binding": "DB",
 			"database_name": "cf-react-hono-template",
-			"database_id": "00000000-0000-0000-0000-000000000000"
+			"database_id": "e04a7ec3-12eb-4cce-8f06-4d6823ceb1c1"
 		}
 	]
 }
