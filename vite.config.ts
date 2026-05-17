@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
+import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
 import { cloudflare } from "@cloudflare/vite-plugin";
@@ -13,7 +13,9 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src'),
+      '@client': path.resolve(__dirname, 'src/client'),
+      '@server': path.resolve(__dirname, 'src/server'),
+      '@shared': path.resolve(__dirname, 'src/shared'),
     },
   },
 })

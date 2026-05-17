@@ -3,7 +3,7 @@
 // Runtime types generated with workerd@1.20260301.1 2026-03-08 nodejs_compat
 declare namespace Cloudflare {
 	interface GlobalProps {
-		mainModule: typeof import("./src/api/index");
+		mainModule: typeof import("./src/server/index");
 	}
 	interface Env {
 		DB: D1Database;

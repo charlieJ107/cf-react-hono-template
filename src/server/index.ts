@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { getAuth } from "@/lib/auth";
+import { getAuth } from "@server/lib/auth";
 import meApp from "./me";
 
 const app = new Hono<{ Bindings: Env }>();
@@ -29,3 +29,4 @@ app.get("*", async (c) => {
 });
 
 export default app;
+export type AppType = typeof app;

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { authClient } from "@/lib/client/auth-client";
+import { Button } from "@client/components/ui/button";
+import { Card, CardHeader, CardTitle, CardDescription } from "@client/components/ui/card";
+import { authClient } from "@client/lib/auth-client";
 
 export default function Dashboard() {
     const navigate = useNavigate();

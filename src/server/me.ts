@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { getAuth, type AuthSession } from "@/lib/auth";
+import { getAuth, type AuthSession } from "@server/lib/auth";
 
 type Variables = {
     user: AuthSession["user"];

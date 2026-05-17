@@ -1,27 +1,42 @@
 {
   "compilerOptions": {
-    "forceConsistentCasingInFileNames": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
-    "target": "ES2023",
-    "lib": ["ES2023"],
+    "target": "ESNext",
+    "lib": [
+      "ESNext"
+    ],
     "module": "ESNext",
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "skipLibCheck": true,
-
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
     "noEmit": true,
-
     /* Linting */
-    "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "paths": {
+      "@client/*": [
+        "./src/client/*"
+      ],
+      "@server/*": [
+        "./src/server/*"
+      ],
+      "@shared/*": [
+        "./src/shared/*"
+      ]
+    },
   },
-  "include": ["vite.config.ts"]
+  "include": [
+    "vite.config.ts",
+    "better-auth.config.ts"
+  ]
 }

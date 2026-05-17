@@ -7,7 +7,7 @@
  */
 import { betterAuth } from "better-auth";
 import Database from "better-sqlite3";
-import { getBetterAuthOptions } from "./src/lib/auth";
+import { getBetterAuthOptions } from "@server/lib/auth";
 
 const cliDatabase = new Database(".auth-schema.sqlite");
 const auth = betterAuth(

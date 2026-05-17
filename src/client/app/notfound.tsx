@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import { FileQuestion } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Button } from "@client/components/ui/button"
 import {
   Card,
   CardContent,
@@ -8,7 +8,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@client/components/ui/card"
 
 export default function NotFound() {
   return (

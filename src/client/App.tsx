@@ -1,10 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "@/app/index";
-import NotFound from "@/app/notfound";
-import Messages from "@/app/messages";
-import SignIn from "@/app/sign-in";
-import SignUp from "@/app/sign-up";
-import Dashboard from "@/app/dashboard";
+import Index from "@client/app/index";
+import NotFound from "@client/app/notfound";
+import Messages from "@client/app/messages";
+import SignIn from "@client/app/sign-in";
+import SignUp from "@client/app/sign-up";
+import Dashboard from "@client/app/dashboard";
 
 function App() {
   return (
