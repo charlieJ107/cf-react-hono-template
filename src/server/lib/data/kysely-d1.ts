@@ -1,4 +1,6 @@
 
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, require-yield */
+
 /**
 MIT License
 

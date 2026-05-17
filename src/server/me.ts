@@ -1,7 +1,9 @@
 import { Hono } from "hono";
-import { getAuth, type AuthSession } from "@server/lib/auth";
+import type { AuthSession } from "@server/lib/auth";
+import type { AppVariables } from "@server/env";
 
 type Variables = {
+    app: AppVariables["app"];
     user: AuthSession["user"];
     session: AuthSession["session"];
 };
@@ -10,11 +12,10 @@ type Variables = {
  * Dedicated Hono app for auth-protected API. Middleware returns 401 when unauthenticated,
  * so handlers can assume user/session are set.
  */
-const meApp = new Hono<{ Bindings: Env; Variables: Variables }>();
+const meApp = new Hono<{ Variables: Variables }>();
 
 meApp.use("*", async (c, next) => {
-    const auth = getAuth(c.env);
-    const session = await auth.api.getSession({ headers: c.req.raw.headers });
+    const session = await c.var.app.auth.api.getSession({ headers: c.req.raw.headers });
     if (!session) {
         return c.json({ code: "UNAUTHORIZED", message: "Unauthorized" }, 401);
     }

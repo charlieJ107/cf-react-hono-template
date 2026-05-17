@@ -37,6 +37,8 @@
   },
   "include": [
     "vite.config.ts",
+    "vite.config.client.ts",
+    "vite.config.node.ts",
     "better-auth.config.ts"
   ]
 }

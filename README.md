@@ -1,6 +1,60 @@
 # React + Hono template for Cloudflare Worker
 
-A full-stack template built with **React**, **Hono**, and **Vite**, designed to run on **Cloudflare Workers**. A single Worker serves both the React SPA and the Hono API, with email/password authentication (Better Auth + D1) and base UI components (shadcn/ui + Tailwind) out of the box. Use it as a starting point for new projects.
+A full-stack template built with **React**, **Hono**, and **Vite**, designed to run on **Cloudflare Workers** or a regular **Node** server. The platform-neutral Hono app serves the same API on both targets, while the entry/platform adapters handle D1 vs Postgres, Workers Assets vs Node static serving, and environment differences. It includes email/password authentication (Better Auth) and base UI components (shadcn/ui + Tailwind) out of the box.
+
+---
+
+## Deployment targets
+
+### Cloudflare Workers
+
+```bash
+npm run build:cf
+npm run deploy:cf
+```
+
+Cloudflare uses `src/server/entry.cloudflare.ts`, `vite.config.ts`, and `wrangler.jsonc`.
+Workers Assets handle SPA fallback, while `/api/*` is routed through the Worker first.
+
+### Node
+
+```bash
+npm run build:node
+npm run start:node
+```
+
+Node emits:
+
+```txt
+dist/node/entry.node.js
+dist/client/
+```
+
+For platforms such as DigitalOcean App Platform:
+
+```txt
+Build command: npm run build:node
+Run command:   npm run start:node
+```
+
+For Docker:
+
+```bash
+npm run docker:build
+npm run docker:run
+```
+
+Node runtime variables:
+
+```txt
+DATABASE_URL
+BETTER_AUTH_SECRET
+BETTER_AUTH_URL
+BETTER_AUTH_ALLOWED_HOSTS
+PORT
+```
+
+`PORT` is optional and defaults to `3000`.
 
 ---
 
