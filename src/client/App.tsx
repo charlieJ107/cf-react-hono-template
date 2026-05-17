@@ -5,6 +5,7 @@ import Messages from "@client/app/messages";
 import SignIn from "@client/app/sign-in";
 import SignUp from "@client/app/sign-up";
 import Dashboard from "@client/app/dashboard";
+import { AppShell } from "@client/components/app/shell";
 
 function App() {
   return (
@@ -13,8 +14,10 @@ function App() {
         <Route path="/" element={<Index />} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/messages" element={<Messages />} />
+        <Route element={<AppShell />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/messages" element={<Messages />} />
+        </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

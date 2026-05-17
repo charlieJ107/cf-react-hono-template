@@ -11,6 +11,7 @@ export default defineConfig([
     'worker-configuration.d.ts',
     'src/client/components/ui/**',
     'src/client/components/ai-elements/**',
+    'src/client/hooks/use-mobile.ts',
   ]),
   {
     files: ['**/*.{ts,tsx}'],
