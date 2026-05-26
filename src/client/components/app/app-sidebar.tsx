@@ -1,4 +1,4 @@
-import { LayoutDashboard, Mail, Settings } from "lucide-react";
+import { LayoutDashboard, Mail } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
     Sidebar,
@@ -17,7 +17,6 @@ import { NavUser } from "@client/components/app/nav-user";
 const navItems = [
     { title: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
     { title: "Messages", icon: Mail, path: "/messages" },
-    { title: "Settings", icon: Settings, path: "/settings" },
 ];
 
 export function AppSidebar() {
@@ -41,7 +40,7 @@ export function AppSidebar() {
                                     <img src="/icon.svg" alt="App icon" className="h-10 w-10" />
                                 </div>
                                 <div className="grid flex-1 text-left text-sm leading-tight">
-                                    <span className="truncate font-medium">Application Name</span>
+                                    <span className="truncate font-medium">Full-Stack Template</span>
                                     <span className="truncate text-xs text-muted-foreground">
                                         React + Hono
                                     </span>

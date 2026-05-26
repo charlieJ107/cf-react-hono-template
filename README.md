@@ -1,10 +1,168 @@
-# React + Hono template for Cloudflare Worker
+# React + Hono Template for Cloudflare Workers
 
-A full-stack template built with **React**, **Hono**, and **Vite**, designed to run on **Cloudflare Workers** or a regular **Node** server. The platform-neutral Hono app serves the same API on both targets, while the entry/platform adapters handle D1 vs Postgres, Workers Assets vs Node static serving, and environment differences. It includes email/password authentication (Better Auth) and base UI components (shadcn/ui + Tailwind) out of the box.
+A full-stack template built with React, Hono, Vite, Better Auth, and shadcn/ui. The same platform-neutral Hono app runs on Cloudflare Workers or a regular Node server, while small platform adapters handle runtime-specific dependencies such as D1 vs Postgres, Workers Assets vs Node static serving, and environment variables.
 
----
+## Features
 
-## Deployment targets
+| Feature | Description |
+| --- | --- |
+| Same-origin full stack | One origin serves the React SPA and Hono API, so no CORS setup is needed |
+| Authentication | Better Auth email/password flow with shared runtime config |
+| Shared DTOs | Zod schemas and inferred TypeScript DTOs live in `src/shared/dto` |
+| Database adapters | Cloudflare D1 for Workers, Postgres for Node |
+| UI foundation | shadcn/ui, Tailwind CSS v4, Geist font, Radix UI, Lucide icons |
+| Dual deployment | Cloudflare Workers deployment and Node/Docker deployment scripts |
+
+## Tech Stack
+
+- Frontend: React 19, Vite 8, React Router 7, Tailwind CSS 4, shadcn/ui, SWR
+- Backend: Hono 4
+- Auth: Better Auth
+- Database: Cloudflare D1 on Workers, Postgres on Node
+- Shared contracts: Zod DTO schemas under `src/shared/dto`
+- Runtime: Cloudflare Workers with `nodejs_compat`, or Node 24+
+
+## Project Structure
+
+```txt
+src/
+  client/
+    app/                 React route components
+    components/          App and shadcn/ui components
+    hooks/               Client hooks
+    lib/                 Client-only helpers
+  server/
+    entry.cloudflare.ts  Cloudflare Worker entrypoint
+    entry.node.ts        Node server entrypoint
+    index.ts             Platform-neutral Hono app and API routes
+    me.ts                Auth-protected /api/me sub-app
+    env.ts               App runtime types
+    lib/                 Server-only auth, storage, and data helpers
+    platforms/           Runtime factories for Cloudflare and Node
+  shared/
+    dto/                 Zod schemas and DTO types used by client and server
+migrations/
+  d1/                    Wrangler SQL migrations for Cloudflare D1
+  kysely/postgres/       Kysely TypeScript migrations for Node/Postgres
+better-auth.config.ts    Better Auth CLI schema-generation config
+kysely.config.ts         Postgres Kysely CLI migration config
+wrangler.jsonc           Worker, assets, and D1 configuration
+```
+
+## Quick Start
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Create local environment files from `.env.example`:
+
+```bash
+cp .env.example .dev.vars
+cp .env.example .env
+```
+
+Use `.dev.vars` for Cloudflare local development and `.env` for Node, Docker, and Postgres migration commands. At minimum, set:
+
+```ini
+BETTER_AUTH_SECRET=your-32-plus-character-random-secret
+BETTER_AUTH_URL=http://localhost:8787
+BETTER_AUTH_ALLOWED_HOSTS=""
+```
+
+Generate a secret with:
+
+```bash
+openssl rand -base64 32
+```
+
+Create a D1 database and update `wrangler.jsonc`:
+
+```bash
+npx wrangler d1 create cf-react-hono-template
+```
+
+Set the returned `database_id` in `wrangler.jsonc`.
+
+Apply the D1 migrations:
+
+```bash
+npm run db:migrate:d1:local
+```
+
+The initial D1 migration includes the Better Auth tables.
+
+Start local development:
+
+```bash
+npm run dev
+```
+
+Open the URL printed by Vite/Wrangler. With the default Cloudflare dev setup this is usually `http://localhost:8787`.
+
+## Routes
+
+- `/` - public landing page
+- `/sign-up` - create an account
+- `/sign-in` - sign in
+- `/dashboard` - protected dashboard
+- `/messages` - protected page that calls `/api/messages`
+
+## API
+
+- `GET /api/health` - health check
+- `GET /api/messages` - example response validated with `@shared/dto/messages`
+- `GET /api/me` - current authenticated user, or 401
+- `GET|POST /api/auth/*` - Better Auth endpoints
+
+## Shared DTO Pattern
+
+Shared request and response contracts belong in `src/shared/dto`. Each file should export:
+
+- Zod schemas for runtime validation.
+- `z.infer` DTO types for client and server TypeScript use.
+
+For example, `src/shared/dto/messages.ts` defines the `/api/messages` response schema. The server parses the response before returning it, and the client parses the JSON after fetching it. This keeps API contracts visible without duplicating types.
+
+## Database Migrations
+
+This template intentionally keeps D1 and Postgres migrations separate.
+
+- D1 migrations live in `migrations/d1` as plain SQL files and are applied by Wrangler.
+- Postgres migrations live in `migrations/kysely/postgres` as Kysely TypeScript files and are applied by `kysely-ctl`.
+
+The split is deliberate. D1 is reached through a Cloudflare Worker binding, the D1 REST API, or Wrangler. Kysely can query D1 from inside a Worker when given `env.DB`, but it cannot directly connect to a remote D1 database from a normal Node migration process in the same way it connects to Postgres. Keeping D1 migrations in Wrangler-compatible SQL avoids exposing a migration HTTP endpoint and keeps Cloudflare deployments aligned with the native D1 tooling.
+
+When a schema change affects both runtimes, add two migrations with matching version numbers and names:
+
+```txt
+migrations/
+  d1/
+    0002_add_widgets.sql
+  kysely/
+    postgres/
+      0002_add_widgets.ts
+```
+
+Use D1 migrations for Cloudflare:
+
+```bash
+npm run db:migrate:d1:local
+npm run db:migrate:d1:remote
+```
+
+Use Kysely CLI migrations for Postgres:
+
+```bash
+npm run db:migrate:postgres:latest
+npm run db:migrate:postgres:status
+```
+
+`npm run auth:generate` uses `npx auth@latest` to generate a temporary Better Auth schema SQL file. Treat it as a helper for refreshing or comparing the Better Auth baseline; committed database migrations remain the source of truth.
+
+## Deployment Targets
 
 ### Cloudflare Workers
 
@@ -13,8 +171,21 @@ npm run build:cf
 npm run deploy:cf
 ```
 
-Cloudflare uses `src/server/entry.cloudflare.ts`, `vite.config.ts`, and `wrangler.jsonc`.
-Workers Assets handle SPA fallback, while `/api/*` is routed through the Worker first.
+Cloudflare uses:
+
+- `src/server/entry.cloudflare.ts`
+- `vite.config.ts`
+- `wrangler.jsonc`
+
+Workers Assets serve the SPA with `not_found_handling: "single-page-application"`. Requests matching `/api/*` run through the Worker first.
+
+Production Worker secrets:
+
+```txt
+BETTER_AUTH_SECRET
+BETTER_AUTH_URL
+BETTER_AUTH_ALLOWED_HOSTS
+```
 
 ### Node
 
@@ -30,20 +201,6 @@ dist/node/entry.node.js
 dist/client/
 ```
 
-For platforms such as DigitalOcean App Platform:
-
-```txt
-Build command: npm run build:node
-Run command:   npm run start:node
-```
-
-For Docker:
-
-```bash
-npm run docker:build
-npm run docker:run
-```
-
 Node runtime variables:
 
 ```txt
@@ -56,219 +213,66 @@ PORT
 
 `PORT` is optional and defaults to `3000`.
 
----
-
-## Features
-
-| Feature | Description |
-|--------|-------------|
-| **Full-stack same-origin** | One Worker serves the React SPA and Hono API; no CORS needed |
-| **Authentication** | [Better Auth](https://www.better-auth.com/): email/password with Cloudflare D1 |
-| **Database** | D1 (SQLite), integrated with Better Auth via a Kysely adapter |
-| **UI** | [shadcn/ui](https://ui.shadcn.com/) (Radix + Tailwind v4), Geist font, Lucide icons |
-| **Routing & data** | React Router v7, SWR example for API calls |
-| **Build & deploy** | Vite 8 + `@cloudflare/vite-plugin`, one-command deploy with `wrangler deploy` |
-
----
-
-## Tech stack
-
-- **Frontend**: React 19, Vite 8, React Router 7, Tailwind CSS 4, shadcn/ui, SWR
-- **Backend**: Hono 4 (runs on Cloudflare Worker)
-- **Auth**: Better Auth (email/password, D1 storage)
-- **Database**: Cloudflare D1 (SQLite)
-- **Runtime**: Cloudflare Workers (with `nodejs_compat`)
-
----
-
-## Project structure
-
-```
-├── src/
-│   ├── api/              # Hono app and API routes
-│   │   ├── index.ts      # Main app: auth proxy, /api/me, /api/health, /api/messages
-│   │   └── me.ts         # Auth-protected /api/me sub-app
-│   ├── app/              # Page components
-│   │   ├── index.tsx     # Home
-│   │   ├── sign-in.tsx   # Sign in
-│   │   ├── sign-up.tsx   # Sign up
-│   │   ├── dashboard.tsx # Protected dashboard
-│   │   ├── messages.tsx  # Example page calling /api/messages
-│   │   └── notfound.tsx
-│   ├── components/ui/    # shadcn components (button, card, etc.)
-│   └── lib/
-│       ├── auth.ts           # Better Auth server config (D1) — stays at root for CLI compatibility
-│       ├── utils.ts          # shadcn cn() utility — stays at root for shadcn CLI compatibility
-│       ├── client/           # React-only: auth-client, fetch helpers
-│       ├── server/           # Worker-only: D1/Kysely adapter, server utilities
-│       │   └── data/         # Kysely D1 adapter
-│       └── shared/           # Used by both Worker and React: error codes, shared types
-├── migrations/           # Optional: custom D1 migrations
-├── better-auth.config.ts # CLI-only: generate Better Auth schema (local SQLite)
-├── wrangler.jsonc        # Worker, D1, and static assets config
-└── vite.config.ts       # Vite + Cloudflare plugin
-```
-
----
-
-## Prerequisites
-
-- **Node.js** 18+
-- **npm** or **pnpm**
-- **Cloudflare account** (for D1 and deployment)
-
----
-
-## Quick start
-
-### 1. Clone and install
+Docker:
 
 ```bash
-git clone <your-repo-url> my-app
-cd my-app
-npm install
+npm run docker:build
+npm run docker:run
 ```
 
-### 2. Environment variables
-
-Create `.dev.vars` in the project root (for local development; it is in `.gitignore`):
-
-```ini
-BETTER_AUTH_SECRET=your-32-plus-character-random-string
-BETTER_AUTH_URL=http://localhost:5173
-```
-
-Example: generate a secret with
+Before starting the Node target against a fresh Postgres database, run:
 
 ```bash
-openssl rand -base64 32
+npm run db:migrate:postgres:latest
 ```
-
-> For production, set the same variable names as **Secrets** for your Worker in the Cloudflare dashboard, and set `BETTER_AUTH_URL` to your production URL (e.g. `https://your-app.example.com`).
-
-### 3. Initialize Better Auth database tables
-
-#### Manual Apply
-
-Better Auth’s CLI generates schema SQL from the config (using a local SQLite DB). Apply that SQL to D1 manually.
-
-**Generate schema:**
-
-```bash
-npm run auth:generate
-```
-
-This writes `schema.sql` in the project root by default (use `--output <path>` to change it).
-
-**Apply to D1:**
-
-```bash
-# Local D1 (development)
-npx wrangler d1 execute cf-react-hono-template --local --file=./schema.sql
-
-# Remote D1 (production)
-npx wrangler d1 execute cf-react-hono-template --remote --file=./schema.sql
-```
-
-Replace `cf-react-hono-template` with your `database_name` from `wrangler.jsonc` if different.
-
-#### Use `wrangler d1 migration apply`
-
-You may also create  D1 migrations by using `wrangler` CLI, then just copy and paste the generated `schema.sql` into the `wrangler` created migration sql file. 
-
-### 4. Start the dev server
-
-```bash
-npm run dev
-```
-
-Open **http://localhost:8787** (or the URL shown in the terminal). You can use:
-
-- **/** — Home
-- **/sign-up** — Sign up
-- **/sign-in** — Sign in
-- **/dashboard** — Protected dashboard (requires sign-in)
-- **/messages** — Example page that calls `/api/messages`
-
----
-
-## Architecture
-
-- **Single Worker, two roles**: In `wrangler.jsonc`, `main` points to the Hono entry (`./src/api/index.ts`), and `assets` points to `./dist/client` with `binding: "ASSETS"` and `not_found_handling: "none"`. All requests pass through the Worker; a catch-all route in `src/api/index.ts` serves `index.html` for SPA navigation and returns JSON 404 for unknown `/api/*` paths.
-- **Same-origin**: Frontend and API share the same origin, so requests with `credentials: "include"` send cookies; no CORS setup is required.
-- **Auth and D1**: At runtime, auth uses D1 via `getAuth(c.env)`. The CLI uses `better-auth.config.ts` with a local SQLite DB only to generate the same schema; you then apply it to D1 with `wrangler d1 execute`.
-
----
 
 ## Scripts
 
 | Command | Description |
-|--------|-------------|
-| `npm run dev` | Local development (Vite + Worker simulation) |
-| `npm run build` | Type-check and build (output in `dist/`) |
-| `npm run preview` | Preview the production build |
-| `npm run deploy` | Deploy to Cloudflare Workers |
-| `npm run auth:generate` | Generate Better Auth schema SQL |
-| `npm run cf-typegen` | Generate Worker types (`wrangler types`) |
-| `npm run check` | Type-check, build, and deploy dry-run |
+| --- | --- |
+| `npm run dev` | Local Cloudflare/Vite development |
+| `npm run build` | Default Cloudflare build |
+| `npm run build:cf` | Type-check and build for Cloudflare Workers |
+| `npm run build:node` | Build client and Node server output |
+| `npm run start:node` | Run the built Node server |
+| `npm run deploy:cf` | Build and deploy to Cloudflare Workers |
+| `npm run auth:generate` | Generate temporary Better Auth schema SQL with `npx auth@latest` |
+| `npm run db:migrate:d1:local` | Apply D1 SQL migrations to local Wrangler D1 |
+| `npm run db:migrate:d1:remote` | Apply D1 SQL migrations to remote Cloudflare D1 |
+| `npm run db:migrate:postgres:latest` | Apply all pending Postgres Kysely migrations |
+| `npm run db:migrate:postgres:up` | Apply one pending Postgres Kysely migration |
+| `npm run db:migrate:postgres:down` | Roll back one Postgres Kysely migration |
+| `npm run db:migrate:postgres:status` | List Postgres Kysely migration status |
+| `npm run cf-typegen` | Generate Worker binding types |
+| `npm run check` | Type-check, build, and run a Wrangler dry-run deploy |
 | `npm run lint` | Run ESLint |
 
----
+## Extending
 
-## Deploying to Cloudflare
+- Add shared DTOs under `src/shared/dto` when client and server both need a contract.
+- Add API sub-apps under `src/server` and mount them from `src/server/index.ts`.
+- Add D1 migrations under `migrations/d1` and matching Postgres migrations under `migrations/kysely/postgres` when a schema change affects both targets.
+- Extend auth in `src/server/lib/auth.ts` and keep `better-auth.config.ts` using the same shared options.
 
-1. Log in: `npx wrangler login`
-2. If you haven’t created the D1 database yet, run the remote `wrangler d1 execute ... --remote` command once, or create it in the dashboard and set `database_id` in `wrangler.jsonc`.
-3. In the Cloudflare dashboard, set Secrets for the Worker: `BETTER_AUTH_SECRET` and `BETTER_AUTH_URL` (your production URL).
-4. Run: `npm run deploy`
+### Object Storage
 
-Assets and the Worker are uploaded together. Use the assigned `*.workers.dev` URL or your custom domain.
+`AppRuntime` includes a `blob` field backed by `UnsupportedObjectStorage` by default. This is an intentional extension point for projects that need file uploads or generated assets.
 
----
+- On Cloudflare, replace it with an R2-backed implementation in `src/server/platforms/cloudflare.ts`.
+- On Node, replace it with an S3-compatible implementation in `src/server/platforms/node.ts`.
+- If a project does not need object storage, the `blob` field and `src/server/lib/blob.ts` can be removed.
 
-## API overview
+### Renaming The Template
 
-- **GET /api/health** — Health check; returns `{ status: "ok" }`
-- **GET /api/messages** — Example JSON list (no auth required)
-- **GET /api/me** — Current user when authenticated; returns 401 otherwise
-- **POST/GET /api/auth/\*** — Handled by Better Auth (sign-in, sign-up, sign-out, etc.)
+The template keeps names explicit instead of hiding them behind a generator. After cloning, replace `cf-react-hono-template` in:
 
----
+- `package.json` package name and Docker image scripts.
+- `wrangler.jsonc` Worker name and D1 database name.
+- `README.md` examples.
+- `index.html` page title.
 
-## Extending the template
-
-- **ESLint**: For type-aware rules, enable e.g. `tseslint.configs.recommendedTypeChecked` in `eslint.config.js` and set `parserOptions.project` to `tsconfig.node.json` / `tsconfig.app.json`.
-- **More auth methods**: In `src/lib/auth.ts`, extend `getBetterAuthOptions` with Better Auth plugins (OAuth, magic link, etc.).
-- **App migrations**: Add SQL files under `migrations/` and apply them with `wrangler d1 migration apply <YOUR D1 NAME>`.
-
----
+Then create a new D1 database with the chosen name and set the returned `database_id` in `wrangler.jsonc`.
 
 ## License
 
-This project is licensed under the **Mozilla Public License 2.0** (MPL 2.0). See [LICENSE](LICENSE) for the full text.
-
----
-
-## Contributing
-
-Contributions are welcome. To contribute:
-
-1. **Fork** the repository and clone your fork.
-2. **Create a branch** for your change: `git checkout -b feature/your-feature` or `fix/your-fix`.
-3. **Make your changes**: follow existing code style, keep the template minimal and well-documented.
-4. **Test**: run `npm run build` and `npm run lint`; manually test auth and key flows if you changed them.
-5. **Commit** with clear messages (e.g. “Add OAuth example”, “Fix D1 binding in dev”).
-6. **Push** to your fork and open a **Pull Request** against the default branch. Describe what you changed and why.
-7. **Discussion**: maintainers may ask for adjustments; once approved, your PR can be merged.
-
-By contributing, you agree that your contributions will be licensed under the same MPL 2.0 license as this project.
-
----
-
-## References
-
-- [Cloudflare Workers](https://workers.cloudflare.com/)
-- [Hono](https://hono.dev/)
-- [Better Auth](https://www.better-auth.com/)
-- [Vite](https://vite.dev/)
-- [shadcn/ui](https://ui.shadcn.com/)
+This project is licensed under the Mozilla Public License 2.0. See [LICENSE](LICENSE).

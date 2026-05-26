@@ -27,7 +27,9 @@
 		{
 			"binding": "DB",
 			"database_name": "cf-react-hono-template",
-			"database_id": "e04a7ec3-12eb-4cce-8f06-4d6823ceb1c1"
+			// Replace with the id returned by `npx wrangler d1 create cf-react-hono-template`.
+			"database_id": "00000000-0000-0000-0000-000000000000",
+			"migrations_dir": "migrations/d1"
 		}
 	]
 }

@@ -9,7 +9,7 @@ export default function Index() {
             <div className="border-b bg-card">
                 <div className="container mx-auto px-4 py-6">
                     <div className="flex items-center justify-between">
-                        <h1 className="text-2xl font-bold">Application Name</h1>
+                        <h1 className="text-2xl font-bold">Full-Stack Template</h1>
                         <div className="flex gap-2">
                             <Button variant="outline" asChild>
                                 <Link to="/sign-in">Sign In</Link>
@@ -24,9 +24,9 @@ export default function Index() {
 
             <div className="container mx-auto px-4 py-16">
                 <div className="max-w-3xl mx-auto text-center mb-16">
-                    <h2 className="text-4xl font-bold mb-4 text-balance">Welcome to this App</h2>
+                    <h2 className="text-4xl font-bold mb-4 text-balance">React + Hono on Cloudflare</h2>
                     <p className="text-xl text-muted-foreground text-pretty">
-                        This is a application template.
+                        A same-origin starter with authentication, shared DTOs, and dual Cloudflare/Node runtimes.
                     </p>
                 </div>
 
@@ -34,24 +34,24 @@ export default function Index() {
                     <Card>
                         <CardHeader>
                             <BarChart3 className="h-10 w-10 text-primary mb-2" />
-                            <CardTitle>Feature 1</CardTitle>
-                            <CardDescription>Description of feature 1</CardDescription>
+                            <CardTitle>Typed API</CardTitle>
+                            <CardDescription>Hono routes with shared DTO contracts.</CardDescription>
                         </CardHeader>
                     </Card>
 
                     <Card>
                         <CardHeader>
                             <Users className="h-10 w-10 text-primary mb-2" />
-                            <CardTitle>Feature 2</CardTitle>
-                            <CardDescription>Description of feature 2</CardDescription>
+                            <CardTitle>Authentication</CardTitle>
+                            <CardDescription>Email/password auth using Better Auth.</CardDescription>
                         </CardHeader>
                     </Card>
 
                     <Card>
                         <CardHeader>
                             <Shield className="h-10 w-10 text-primary mb-2" />
-                            <CardTitle>Feature 3</CardTitle>
-                            <CardDescription>Description of feature 3</CardDescription>
+                            <CardTitle>Portable Runtime</CardTitle>
+                            <CardDescription>Deploy to Cloudflare Workers or a Node server.</CardDescription>
                         </CardHeader>
                     </Card>
                 </div>

@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import app from "./index";
+import { messageListResponseSchema } from "@shared/dto/messages";
 
 describe("GET /api/health", () => {
     it("returns 200 with status ok", async () => {
@@ -17,5 +18,14 @@ describe("GET /api/*  (unknown endpoint)", () => {
         const body = await res.json() as { code: string };
         expect(body.code).toBe("NOT_FOUND");
         expect(res.headers.get("content-type")).toMatch(/application\/json/);
+    });
+});
+
+describe("GET /api/messages", () => {
+    it("returns data matching the shared DTO", async () => {
+        const res = await app.request("/api/messages");
+        expect(res.status).toBe(200);
+        const body = messageListResponseSchema.parse(await res.json());
+        expect(body.messages.length).toBeGreaterThan(0);
     });
 });

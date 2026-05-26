@@ -4,7 +4,7 @@ import type { AppConfig } from "@server/env";
 
 /**
  * Shared options for Better Auth used by both:
- * - Runtime (Worker): src/lib/auth.ts with D1
+ * - Runtime (Worker): src/server/platforms/cloudflare.ts with D1
  * - CLI (generate/migrate): better-auth.config.ts with local SQLite
  *
  * Only `database` and runtime env (secret, baseURL) differ; the rest stays in sync here.

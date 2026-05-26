@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@client/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription } from "@client/components/ui/card";
+import { Input } from "@client/components/ui/input";
 import { authClient } from "@client/lib/auth-client";
 
 export default function SignUp() {
@@ -50,13 +51,12 @@ export default function SignUp() {
                         >
                             Name
                         </label>
-                        <input
+                        <Input
                             id="name"
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
-                            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
                             autoComplete="name"
                         />
                     </div>
@@ -67,13 +67,12 @@ export default function SignUp() {
                         >
                             Email
                         </label>
-                        <input
+                        <Input
                             id="email"
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
                             autoComplete="email"
                         />
                     </div>
@@ -84,14 +83,13 @@ export default function SignUp() {
                         >
                             Password
                         </label>
-                        <input
+                        <Input
                             id="password"
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
                             minLength={8}
-                            className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
                             autoComplete="new-password"
                         />
                     </div>

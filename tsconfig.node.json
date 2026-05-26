@@ -39,6 +39,8 @@
     "vite.config.ts",
     "vite.config.client.ts",
     "vite.config.node.ts",
-    "better-auth.config.ts"
+    "better-auth.config.ts",
+    "kysely.config.ts",
+    "migrations/kysely/postgres/**/*.ts"
   ]
 }

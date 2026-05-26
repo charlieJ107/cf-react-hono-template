@@ -5,6 +5,9 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
+      "@client": path.resolve(__dirname, "src/client"),
+      "@server": path.resolve(__dirname, "src/server"),
+      "@shared": path.resolve(__dirname, "src/shared"),
     },
   },
   test: {
@@ -14,7 +17,7 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "lcov"],
       include: ["src/**/*.ts"],
-      exclude: ["**/*.test.ts", "**/index.ts", "**/lib/server/data/kysely-d1.ts"],
+      exclude: ["**/*.test.ts", "**/index.ts", "**/server/lib/data/kysely-d1.ts"],
     },
   }
 });
