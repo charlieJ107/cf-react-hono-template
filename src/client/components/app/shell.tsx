@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router";
 import { useEffect } from "react";
 
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@client/components/ui/sidebar";

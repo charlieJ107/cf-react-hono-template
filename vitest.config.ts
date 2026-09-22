@@ -1,13 +1,13 @@
 import { defineConfig } from "vitest/config";
-import path from "path";
+import path from "node:path";
 
 export default defineConfig({
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "src"),
-      "@client": path.resolve(__dirname, "src/client"),
-      "@server": path.resolve(__dirname, "src/server"),
-      "@shared": path.resolve(__dirname, "src/shared"),
+      "@": path.resolve(import.meta.dirname, "src"),
+      "@client": path.resolve(import.meta.dirname, "src/client"),
+      "@server": path.resolve(import.meta.dirname, "src/server"),
+      "@shared": path.resolve(import.meta.dirname, "src/shared"),
     },
   },
   test: {

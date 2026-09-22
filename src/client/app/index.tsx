@@ -1,7 +1,7 @@
-import { Link } from "react-router-dom"
+import { Link } from "react-router"
 import { Button } from "@client/components/ui/button"
 import { Card, CardHeader, CardTitle, CardDescription } from "@client/components/ui/card"
-import { BarChart3, Users, Shield } from "lucide-react"
+import { ChartColumn, Users, Shield } from "lucide-react"
 
 export default function Index() {
     return (
@@ -33,7 +33,7 @@ export default function Index() {
                 <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
                     <Card>
                         <CardHeader>
-                            <BarChart3 className="h-10 w-10 text-primary mb-2" />
+                            <ChartColumn className="h-10 w-10 text-primary mb-2" />
                             <CardTitle>Typed API</CardTitle>
                             <CardDescription>Hono routes with shared DTO contracts.</CardDescription>
                         </CardHeader>

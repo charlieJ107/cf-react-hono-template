@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom"
-import { FileQuestion } from "lucide-react"
+import { Link } from "react-router"
+import { FileQuestionMark } from "lucide-react"
 import { Button } from "@client/components/ui/button"
 import {
   Card,
@@ -16,7 +16,7 @@ export default function NotFound() {
       <Card className="w-full max-w-md text-center">
         <CardHeader className="items-center">
           <div className="rounded-full bg-muted p-4 mb-2">
-            <FileQuestion className="h-12 w-12 text-muted-foreground" />
+            <FileQuestionMark className="h-12 w-12 text-muted-foreground" />
           </div>
           <CardTitle className="text-3xl font-bold">404</CardTitle>
           <CardDescription className="text-base">

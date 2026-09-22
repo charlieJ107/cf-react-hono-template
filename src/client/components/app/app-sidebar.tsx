@@ -1,5 +1,5 @@
 import { LayoutDashboard, Mail } from "lucide-react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router";
 import {
     Sidebar,
     SidebarContent,

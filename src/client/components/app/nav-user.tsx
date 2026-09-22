@@ -25,7 +25,7 @@ import {
     useSidebar,
 } from "@client/components/ui/sidebar";
 import { authClient } from "@client/lib/auth-client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { Skeleton } from "@client/components/ui/skeleton";
 
 export function NavUser() {

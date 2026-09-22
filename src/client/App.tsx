@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router";
 import Index from "@client/app/index";
 import NotFound from "@client/app/notfound";
 import Messages from "@client/app/messages";
