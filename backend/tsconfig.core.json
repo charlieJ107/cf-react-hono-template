@@ -1,0 +1,27 @@
+{
+  // Platform-neutral code: Web-standard APIs only, no Node or Workers globals.
+  // The frontend also type-checks this graph through src/app.ts (import type { AppType } from "backend/app").
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.core.tsbuildinfo",
+    "target": "ES2023",
+    "lib": ["ES2023", "WebWorker"],
+    "types": [],
+    "module": "NodeNext",
+    "strict": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": [
+    "src/app.ts",
+    "src/routes",
+    "src/modules",
+    "src/ports",
+    "src/jobs",
+    "src/auth",
+    "src/db",
+    "src/config",
+    "src/http"
+  ],
+  "exclude": ["src/**/*.test.ts"]
+}

@@ -1,23 +1,8 @@
 import { defineConfig } from "vitest/config";
-import path from "node:path";
 
+// `npm test` at the repo root runs every workspace's tests; each workspace keeps its own config.
 export default defineConfig({
-  resolve: {
-    alias: {
-      "@": path.resolve(import.meta.dirname, "src"),
-      "@client": path.resolve(import.meta.dirname, "src/client"),
-      "@server": path.resolve(import.meta.dirname, "src/server"),
-      "@shared": path.resolve(import.meta.dirname, "src/shared"),
-    },
-  },
   test: {
-    environment: "node",
-    include: ["src/**/*.test.ts"],
-    coverage: {
-      provider: "v8",
-      reporter: ["text", "lcov"],
-      include: ["src/**/*.ts"],
-      exclude: ["**/*.test.ts", "**/index.ts", "**/server/lib/data/kysely-d1.ts"],
-    },
-  }
+    projects: ["frontend", "backend"],
+  },
 });

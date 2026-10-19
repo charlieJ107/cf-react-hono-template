@@ -1,0 +1,14 @@
+{
+  // CLI/tooling files (better-auth CLI, kysely-ctl config and migrations, Vitest config and tests): type-checked, never emitted.
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tools.tsbuildinfo",
+    "target": "ES2023",
+    "module": "NodeNext",
+    "strict": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true,
+    "types": ["node"],
+    "noEmit": true
+  },
+  "include": ["auth.ts", ".config/*.ts", "db/migrations/*.ts", "vitest.config.ts", "src/**/*.test.ts"]
+}

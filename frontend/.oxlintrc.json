@@ -1,0 +1,11 @@
+{
+  "$schema": "../node_modules/oxlint/configuration_schema.json",
+  "extends": ["../.oxlintrc.json"],
+  // Files owned by the shadcn CLI (regenerated or copied verbatim from shadcn docs); not hand-edited.
+  "ignorePatterns": ["src/components/ui/**", "src/hooks/use-mobile.ts", "src/components/theme-provider.tsx"],
+  "plugins": ["react", "typescript", "oxc"],
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/only-export-components": ["warn", { "allowConstantExport": true }]
+  }
+}

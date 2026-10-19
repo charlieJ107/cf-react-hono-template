@@ -1,0 +1,16 @@
+{
+  // Node runtime build: everything under src/ except other platforms, emitted to dist/.
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "target": "ES2023",
+    "module": "NodeNext",
+    "strict": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true,
+    "types": ["node"],
+    "rootDir": "./src",
+    "outDir": "./dist"
+  },
+  "include": ["src"],
+  "exclude": ["src/runtime/cloudflare", "src/infra/d1", "src/**/*.test.ts"]
+}

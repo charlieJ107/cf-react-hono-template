@@ -1,0 +1,27 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  // Shared base for the whole repo. frontend/.oxlintrc.json extends this with React rules.
+  // Import resolution uses the nearest tsconfig.json of each file, so frontend and backend
+  // resolve with their own settings.
+  "plugins": ["typescript", "oxc"],
+  "overrides": [
+    {
+      // Backend core is platform-neutral (see AGENTS.md): no infra/, runtime/ or Node built-ins.
+      "files": [
+        "backend/src/app.ts",
+        "backend/src/{routes,modules,ports,jobs,auth,db,config,http}/**"
+      ],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              { "group": ["**/infra/**", "**/runtime/**"], "message": "Core code must not import infra/ or runtime/; inject dependencies instead." },
+              { "group": ["node:*", "node:*/**"], "message": "Core code must stay platform-neutral; use Web-standard APIs." }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
