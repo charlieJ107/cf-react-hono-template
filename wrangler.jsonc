@@ -3,9 +3,6 @@
 	"name": "cf-react-hono-template",
 	"main": "./src/server/entry.cloudflare.ts",
 	"compatibility_date": "2026-09-15",
-	"compatibility_flags": [
-		"nodejs_compat"
-	],
 	"observability": {
 		"logs": {
 			"enabled": true,
